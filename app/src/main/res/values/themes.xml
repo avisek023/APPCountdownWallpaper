@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.OJSCountdownWallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/bg_black</item>
+        <item name="android:navigationBarColor">@color/bg_black</item>
+    </style>
+</resources>
