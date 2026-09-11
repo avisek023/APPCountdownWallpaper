@@ -18,7 +18,7 @@ data class CountdownState(
 
 object CountdownModel {
     val TARGET_ZONE: ZoneId = ZoneId.of("Asia/Kolkata")
-    private const val PREFS_NAME = "ojs_countdown_prefs"
+    private const val PREFS_NAME = "countdown_prefs"
     private const val KEY_TARGET_EPOCH_MILLIS = "target_epoch_millis"
 
     private fun getPrefs(context: Context): SharedPreferences {
@@ -42,7 +42,7 @@ object CountdownModel {
             .apply()
     }
 
-    fun calculateRemainingTime(context: Context, now: Instant = Instant.now()): CountdownState {
+    fun calculateRemainingTime(context: Context): CountdownState {
         val target = getTargetDateTime(context) ?: return CountdownState(
             days = 0,
             hours = 0,
@@ -52,7 +52,7 @@ object CountdownModel {
             isConfigured = false
         )
 
-        val currentZoned = now.atZone(TARGET_ZONE)
+        val currentZoned = Instant.now().atZone(TARGET_ZONE)
         val duration = Duration.between(currentZoned, target)
 
         return if (duration.isNegative || duration.isZero) {
