@@ -78,15 +78,18 @@ class CountdownRenderer(context: Context) {
         if (currentWidth == 0 || currentHeight == 0) return
 
         canvas.drawRect(0f, 0f, currentWidth.toFloat(), currentHeight.toFloat(), bgPaint)
-        canvas.drawRect(0f, 0f, currentWidth.toFloat(), currentHeight.toFloat(), glowPaint)
+
+        if (state.isConfigured && !state.isTargetReached) {
+            canvas.drawRect(0f, 0f, currentWidth.toFloat(), currentHeight.toFloat(), glowPaint)
+        }
 
         val baselineY = currentHeight * 0.74f
         val labelY = baselineY + (numberWhitePaint.textSize * 0.45f)
 
-        val daysStr = String.format("%02d", state.days)
-        val hoursStr = String.format("%02d", state.hours)
-        val minsStr = String.format("%02d", state.minutes)
-        val secsStr = String.format("%02d", state.seconds)
+        val daysStr = if (!state.isConfigured) "--" else String.format("%02d", state.days)
+        val hoursStr = if (!state.isConfigured) "--" else String.format("%02d", state.hours)
+        val minsStr = if (!state.isConfigured) "--" else String.format("%02d", state.minutes)
+        val secsStr = if (!state.isConfigured) "--" else String.format("%02d", state.seconds)
 
         val colWidth = currentWidth / 4.2f
         val startX = (currentWidth - (colWidth * 3f)) / 2f
@@ -100,10 +103,12 @@ class CountdownRenderer(context: Context) {
         val colon2X = (xHours + xMins) / 2f
         val colon3X = (xMins + xSecs) / 2f
 
+        val lastUnitPaint = if (state.isConfigured) numberRedPaint else numberWhitePaint
+
         canvas.drawText(daysStr, xDays, baselineY, numberWhitePaint)
         canvas.drawText(hoursStr, xHours, baselineY, numberWhitePaint)
         canvas.drawText(minsStr, xMins, baselineY, numberWhitePaint)
-        canvas.drawText(secsStr, xSecs, baselineY, numberRedPaint)
+        canvas.drawText(secsStr, xSecs, baselineY, lastUnitPaint)
 
         val colonOffsetY = numberWhitePaint.textSize * 0.05f
         canvas.drawText(":", colon1X, baselineY - colonOffsetY, colonPaint)
