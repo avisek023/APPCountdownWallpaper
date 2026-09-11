@@ -62,7 +62,7 @@ class OJSWallpaperService : WallpaperService() {
 
         private fun drawFrame() {
             val holder = surfaceHolder ?: return
-            var canvas = try {
+            val canvas = try {
                 holder.lockCanvas()
             } catch (e: Exception) {
                 null
@@ -70,7 +70,7 @@ class OJSWallpaperService : WallpaperService() {
 
             if (canvas != null) {
                 try {
-                    val state = CountdownModel.calculateRemainingTime()
+                    val state = CountdownModel.calculateRemainingTime(applicationContext)
                     renderer.draw(canvas, state)
                 } finally {
                     try {
