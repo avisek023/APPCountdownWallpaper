@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Auto-prompt on launch if no date has ever been selected
         if (selectedTarget == null) {
             binding.root.post { showDatePickerFlow() }
         }
@@ -96,8 +95,7 @@ class MainActivity : AppCompatActivity() {
                 val newTime = selectedTarget?.toLocalTime() ?: LocalTime.of(9, 0)
                 selectedTarget = ZonedDateTime.of(newDate, newTime, CountdownModel.TARGET_ZONE)
                 saveTarget()
-                
-                // If time was not previously set by user, suggest setting time next
+
                 if (!CountdownModel.isConfigured(this)) {
                     showTimePickerFlow()
                 }
@@ -115,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         val timePicker = TimePickerDialog(
             this,
             { _, hourOfDay, minute ->
-                val newDate = selectedTarget?.toLocalDate() ?: LocalDate.now().plusDays(1)
+                val newDate = selectedTarget?.toLocalDate() ?: LocalDate.now(CountdownModel.TARGET_ZONE).plusDays(1)
                 selectedTarget = ZonedDateTime.of(newDate, LocalTime.of(hourOfDay, minute, 0), CountdownModel.TARGET_ZONE)
                 saveTarget()
             },
@@ -127,13 +125,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveTarget() {
-        selectedTarget?.let { target ->
-            CountdownModel.setTargetDateTime(this, target)
-            displayTargetInfo()
-            val state = CountdownModel.calculateRemainingTime(this)
-            updateUi(state)
-            Toast.makeText(this, "Target saved", Toast.LENGTH_SHORT).show()
-        }
+        val target = selectedTarget ?: return
+        CountdownModel.setTargetDateTime(this, target)
+        displayTargetInfo()
+        val state = CountdownModel.calculateRemainingTime(this)
+        updateUi(state)
+        Toast.makeText(this, "Target saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateUi(state: CountdownState) {
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 val fallbackIntent = Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER)
                 startActivity(fallbackIntent)
             } catch (e2: Exception) {
-                Toast.makeText(this, "Select OJS Countdown from wallpaper options.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Select from wallpaper options.", Toast.LENGTH_LONG).show()
             }
         }
     }
